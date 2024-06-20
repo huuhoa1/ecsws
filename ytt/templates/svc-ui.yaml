@@ -1,0 +1,38 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:assert", "assert")
+---
+cluster: #@ data.values.cluster.name1
+serviceName: #@ data.values.yelbServices.ui.name
+taskDefinition: #@ data.values.yelbServices.ui.name + '-' + data.values.cluster.name1
+desiredCount: 3
+launchType: FARGATE
+platformVersion: LATEST
+propagateTags: SERVICE
+deploymentController:
+  type: ECS
+deploymentConfiguration:
+  maximumPercent: 200
+  minimumHealthyPercent: 50
+enableECSManagedTags: true
+enableExecuteCommand: true
+networkConfiguration:
+  awsvpcConfiguration:
+    assignPublicIp: ENABLED
+    securityGroups: 
+      - #@ data.values.vpc.securityGroups.ui
+    subnets: 
+      - #@ data.values.vpc.subnets.private.subnet1
+      - #@ data.values.vpc.subnets.private.subnet2
+
+loadBalancers:
+  - targetGroupArn: #@ data.values.elbv2.TargetGroupArn1
+    containerName: #@ data.values.yelbServices.ui.name
+    containerPort: 80
+
+#@ if data.values.cluster.serviceConnectConfigurationEnabled:
+serviceConnectConfiguration:
+  enabled: true
+#@ else:
+serviceConnectConfiguration:
+  enabled: false
+#@ end

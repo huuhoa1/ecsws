@@ -1,0 +1,73 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:assert", "assert")
+---
+account: 
+  region: #@ data.values.awsRegion
+  id: #@ data.values.awsAccountId
+  stackName: #@ data.values.awsStackName
+  cloud9Url: #@ data.values.cloud9EndpointUrl
+  logGroup: #@ data.values.cloudWatchLogGroupName
+  serviceLinkedRoleArn: #@ data.values.serviceLinkedRoleArn
+
+cluster:
+  serviceConnectConfigurationEnabled: True
+  name1: name1
+  name2: name2
+  name4: name4
+  namespace1: namespace1
+  namespace2: namespace2
+  namespace4: #@ data.values.yelbServiceDiscoveryNameSpaceName
+  usecase4InternalNS: yelb.cloudmap.internal
+  usecase4InternalLBNS: yelb.lb.internal
+
+#@schema/type any=True
+vpc:
+  vpcId: #@ data.values.vpcId
+  vpcCidr: #@ data.values.vpcCidr
+  securityGroups:
+     appServer: #@ data.values.yelbAppServerSecurityGroupId
+     db: #@ data.values.yelbDbSecurityGroupId
+     lb: #@ data.values.yelbLbSecurityGroupId
+     redis: #@ data.values.yelbRedisSecurityGroupId
+     ui: #@ data.values.yelbUiSecurityGroupId
+  subnets:
+    private:
+      subnet1: #@ data.values.privateSubnet1
+      subnet2: #@ data.values.privateSubnet2
+    public:
+      subnet1: #@ data.values.publicSubnet1
+      subnet2: #@ data.values.publicSubnet2
+
+elbv2:
+  LoadBalancerArn1: #@ data.values.yelbEcsLoadBalancer1Arn
+  TargetGroupArn1: #@ data.values.yelbEcsLbTargetGroup1Arn
+  LoadBalancerArn2: #@ data.values.yelbEcsLoadBalancer2Arn
+  TargetGroupArn2: #@ data.values.yelbEcsLbTargetGroup2Arn
+  LoadBalancerArn4: #@ data.values.yelbEcsLoadBalancer4Arn
+  TargetGroupArn4: #@ data.values.yelbEcsLbTargetGroup4Arn
+  InternalLoadBalancerArn: #@ data.values.ecsInternalLoadBalancerArn
+  InternalTargetGroupArn: #@ data.values.ecsInternalTargetGroupArn
+
+yelbServices:
+  appServer:
+    name: #@ data.values.yelbAppServerServiceDiscoveryName
+    image: "hemanthavs/yelb-appserver:latest"
+    taskRole: #@ data.values.yelbAppServerTaskRoleArn
+    taskExecutionRole: #@ data.values.yelbAppServerTaskExecRoleArn
+  db: 
+    name: #@ data.values.yelbDbServiceDiscoveryName
+    image: mreferre/yelb-db:0.5
+    taskRole: #@ data.values.yelbDbTaskRoleArn
+    taskExecutionRole: #@ data.values.yelbDbTaskExecRoleArn
+    serviceArn: #@ data.values.yelbDbServiceArn
+  redis:
+    name: #@ data.values.yelbRedisServiceDiscoveryName
+    image: redis:4.0.2
+    taskRole: #@ data.values.yelbRedisTaskRoleArn
+    taskExecutionRole: #@ data.values.yelbRedisTaskExecRoleArn
+    serviceArn: #@ data.values.yelbRedisServiceArn
+  ui: 
+    name: #@ data.values.yelbUiServiceDiscoveryName
+    image: hemanthavs/yelb-ui:latest
+    taskRole: #@ data.values.yelbUiTaskRoleArn
+    taskExecutionRole: #@ data.values.yelbUiTaskExecRoleArn

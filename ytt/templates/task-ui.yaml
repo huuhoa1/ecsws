@@ -1,0 +1,30 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:assert", "assert")
+---
+family: #@ data.values.yelbServices.ui.name + '-' + data.values.cluster.name1
+networkMode: awsvpc
+cpu: "256"
+memory: "512"
+taskRoleArn: #@ data.values.yelbServices.ui.taskRole
+executionRoleArn: #@ data.values.yelbServices.ui.taskExecutionRole
+containerDefinitions:
+  - name: #@ data.values.yelbServices.ui.name
+    image: #@ data.values.yelbServices.ui.image
+    cpu: 100
+    essential: true
+    portMappings:
+      - name: #@ data.values.yelbServices.ui.name
+        containerPort: 80
+        protocol: tcp
+        appProtocol: http
+    environment:
+      - name: APP_SERVER
+        value: #@ data.values.yelbServices.appServer.name + '.' + data.values.cluster.usecase4InternalLBNS
+      - name: APP_SERVER_PORT
+        value: "4567"
+    logConfiguration:
+      logDriver: awslogs
+      options:
+        awslogs-group: #@ data.values.account.logGroup
+        awslogs-region: #@ data.values.account.region
+        awslogs-stream-prefix: #@ data.values.yelbServices.ui.name + '-' + data.values.cluster.name1

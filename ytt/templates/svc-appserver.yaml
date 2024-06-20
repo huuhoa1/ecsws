@@ -1,0 +1,47 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:assert", "assert")
+---
+cluster: #@ data.values.cluster.name1
+serviceName: #@ data.values.yelbServices.appServer.name
+taskDefinition: #@ data.values.yelbServices.appServer.name + '-' + data.values.cluster.name1
+desiredCount: 3
+launchType: FARGATE
+platformVersion: LATEST
+propagateTags: SERVICE
+deploymentController:
+  type: ECS
+deploymentConfiguration:
+  maximumPercent: 200
+  minimumHealthyPercent: 50
+enableECSManagedTags: true
+enableExecuteCommand: true
+networkConfiguration:
+  awsvpcConfiguration:
+    assignPublicIp: ENABLED
+    securityGroups: 
+      - #@ data.values.vpc.securityGroups.appServer
+    subnets: 
+      - #@ data.values.vpc.subnets.private.subnet1
+      - #@ data.values.vpc.subnets.private.subnet2
+
+#@ if data.values.cluster.serviceConnectConfigurationEnabled:
+serviceConnectConfiguration:
+  enabled: true
+  namespace: #@ data.values.cluster.namespace1
+  services:
+    - portName: #@ data.values.yelbServices.appServer.name
+      clientAliases:
+        - port: 4567
+          dnsName: #@ data.values.yelbServices.appServer.name + '.' + data.values.cluster.usecase4InternalLBNS
+  logConfiguration:
+    logDriver: awslogs
+    options:
+      awslogs-group: #@ data.values.account.logGroup
+      awslogs-region: #@ data.values.account.region
+      awslogs-stream-prefix: #@ data.values.yelbServices.appServer.name + '-' + data.values.cluster.name1 + "-envoy"
+#@ else:
+loadBalancers:
+  - targetGroupArn: #@ data.values.elbv2.InternalTargetGroupArn
+    containerName: #@ data.values.yelbServices.appServer.name
+    containerPort: 4567
+#@ end

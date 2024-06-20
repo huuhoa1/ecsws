@@ -1,0 +1,67 @@
+#@data/values-schema
+---
+account:
+  region: us-west-2
+  id: 879524088423
+  stackName: ecsws-base-infra
+  cloud9Url: https://us-west-2.console.aws.amazon.com/cloud9/ide/be5e317258e248a5977ee4946cc0cffd
+  logGroup: ecs/serviceconnectdemo
+  serviceLinkedRoleArn: arn:aws:iam::879524088423:role/ecsws-ECSServiceLinkedRole
+cluster:
+  serviceConnectConfigurationEnabled: true
+  name1: name1
+  name2: name2
+  name4: name4
+  namespace1: namespace1
+  namespace2: namespace2
+  namespace4: yelb.cloudmap.internal
+  usecase4InternalNS: yelb.cloudmap.internal
+  usecase4InternalLBNS: yelb.lb.internal
+vpc:
+  vpcId: vpc-01e0c042d434052ad
+  vpcCidr: 10.0.0.0/16
+  securityGroups:
+    appServer: sg-0562a6758abc1bed9
+    db: sg-0fb0057f0e2ae74c5
+    lb: sg-09d4112a210d88a43
+    redis: sg-01d07dad229316295
+    ui: sg-0941861c8585b6e9b
+  subnets:
+    private:
+      subnet1: subnet-0414a0be0e150a3db
+      subnet2: subnet-047a38fe844b6ee99
+    public:
+      subnet1: subnet-057a3dbd3722d6166
+      subnet2: subnet-00f3d222172c825cd
+elbv2:
+  LoadBalancerArn1: arn:aws:elasticloadbalancing:us-west-2:879524088423:loadbalancer/app/yelb-usecase1/90d0eeb9dc6d466b
+  TargetGroupArn1: arn:aws:elasticloadbalancing:us-west-2:879524088423:targetgroup/yelb-usecase1/57e238d0a5081a63
+  LoadBalancerArn2: arn:aws:elasticloadbalancing:us-west-2:879524088423:loadbalancer/app/yelb-usecase2/4342aafee88eaeed
+  TargetGroupArn2: arn:aws:elasticloadbalancing:us-west-2:879524088423:targetgroup/yelb-usecase2/afaa44b88f3d13a4
+  LoadBalancerArn4: arn:aws:elasticloadbalancing:us-west-2:879524088423:loadbalancer/app/yelb-usecase4/b8117e043b224dde
+  TargetGroupArn4: arn:aws:elasticloadbalancing:us-west-2:879524088423:targetgroup/yelb-usecase4/1df5977b1c95f1f1
+  InternalLoadBalancerArn: arn:aws:elasticloadbalancing:us-west-2:879524088423:loadbalancer/app/usecase4-appserver/5a7333f7b6392068
+  InternalTargetGroupArn: arn:aws:elasticloadbalancing:us-west-2:879524088423:targetgroup/usecase4-appserver/880a85f38011cebc
+yelbServices:
+  appServer:
+    name: yelb-appserver
+    image: hemanthavs/yelb-appserver:latest
+    taskRole: arn:aws:iam::879524088423:role/ecsws-ECSTaskRole-YelbAppServer
+    taskExecutionRole: arn:aws:iam::879524088423:role/ecsws-ECSTaskExecRole-YelbAppServer
+  db:
+    name: yelb-db
+    image: mreferre/yelb-db:0.5
+    taskRole: arn:aws:iam::879524088423:role/ecsws-ECSTaskRole-YelbDb
+    taskExecutionRole: arn:aws:iam::879524088423:role/ecsws-ECSTaskExecRole-YelbDb
+    serviceArn: arn:aws:servicediscovery:us-west-2:879524088423:service/srv-inalzlaosxa3ffi7
+  redis:
+    name: yelb-redis
+    image: redis:4.0.2
+    taskRole: arn:aws:iam::879524088423:role/ecsws-ECSTaskRole-YelbRedis
+    taskExecutionRole: arn:aws:iam::879524088423:role/ecsws-ECSTaskExecRole-YelbRedis
+    serviceArn: arn:aws:servicediscovery:us-west-2:879524088423:service/srv-dco4k54fzlmkdwao
+  ui:
+    name: yelb-ui
+    image: hemanthavs/yelb-ui:latest
+    taskRole: arn:aws:iam::879524088423:role/ecsws-ECSTaskRole-YelbUi
+    taskExecutionRole: arn:aws:iam::879524088423:role/ecsws-ECSTaskExecRole-YelbUi

@@ -1,0 +1,11 @@
+#@ load("@ytt:overlay", "overlay")
+#@overlay/match by=overlay.subset({"platformVersion": "LATEST"}),expects="1+"
+---
+#@overlay/remove
+serviceName: "yelb-ui"
+
+#@overlay/remove
+launchType: "test"
+
+#@overlay/remove
+deploymentController: "test"

@@ -1,0 +1,45 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:assert", "assert")
+---
+cluster: #@ data.values.cluster.name2
+serviceName: #@ data.values.yelbServices.db.name
+taskDefinition: #@ data.values.yelbServices.db.name + '-' + data.values.cluster.name2
+desiredCount: 1
+launchType: FARGATE
+platformVersion: LATEST
+propagateTags: SERVICE
+deploymentController:
+  type: ECS
+deploymentConfiguration:
+  maximumPercent: 200
+  minimumHealthyPercent: 0
+enableECSManagedTags: true
+enableExecuteCommand: true
+networkConfiguration:
+  awsvpcConfiguration:
+    assignPublicIp: ENABLED
+    securityGroups: 
+      - #@ data.values.vpc.securityGroups.db
+    subnets:
+      - #@ data.values.vpc.subnets.private.subnet1
+      - #@ data.values.vpc.subnets.private.subnet2
+
+#@ if data.values.cluster.serviceConnectConfigurationEnabled:
+serviceConnectConfiguration:
+  enabled: true
+  namespace: #@ data.values.cluster.namespace2
+  services:
+    - portName: #@ data.values.yelbServices.db.name
+      clientAliases:
+        - port: 5432
+          dnsName: #@ data.values.yelbServices.db.name + '.' + data.values.cluster.usecase4InternalNS
+  logConfiguration:
+    logDriver: awslogs
+    options:
+      awslogs-group: #@ data.values.account.logGroup
+      awslogs-region: #@ data.values.account.region
+      awslogs-stream-prefix: #@ data.values.yelbServices.db.name + '-' + data.values.cluster.name2 + "-envoy"
+#@ else:
+serviceRegistries:
+  - registryArn: #@ data.values.yelbServices.db.serviceArn
+#@ end
