@@ -1,0 +1,21 @@
+family: yelb-redis-serviceconnect1-cluster
+networkMode: awsvpc
+cpu: "256"
+memory: "512"
+taskRoleArn: arn:aws:iam::879524088423:role/ecsws-ECSTaskRole-YelbRedis
+executionRoleArn: arn:aws:iam::879524088423:role/ecsws-ECSTaskExecRole-YelbRedis
+containerDefinitions:
+- name: yelb-redis
+  image: redis:4.0.2
+  cpu: 100
+  essential: true
+  portMappings:
+  - name: yelb-redis
+    containerPort: 6379
+    protocol: tcp
+  logConfiguration:
+    logDriver: awslogs
+    options:
+      awslogs-group: ecs/serviceconnectdemo
+      awslogs-region: us-west-2
+      awslogs-stream-prefix: yelb-redis-serviceconnect1-cluster

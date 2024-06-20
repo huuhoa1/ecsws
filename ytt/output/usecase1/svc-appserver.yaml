@@ -1,0 +1,36 @@
+cluster: serviceconnect1-cluster
+serviceName: yelb-appserver
+taskDefinition: yelb-appserver-serviceconnect1-cluster
+desiredCount: 3
+launchType: FARGATE
+platformVersion: LATEST
+propagateTags: SERVICE
+deploymentController:
+  type: ECS
+deploymentConfiguration:
+  maximumPercent: 200
+  minimumHealthyPercent: 50
+enableECSManagedTags: true
+enableExecuteCommand: true
+networkConfiguration:
+  awsvpcConfiguration:
+    assignPublicIp: ENABLED
+    securityGroups:
+    - sg-0562a6758abc1bed9
+    subnets:
+    - subnet-0414a0be0e150a3db
+    - subnet-047a38fe844b6ee99
+serviceConnectConfiguration:
+  enabled: true
+  namespace: yelb.serviceconnect1.internal
+  services:
+  - portName: yelb-appserver
+    clientAliases:
+    - port: 4567
+      dnsName: yelb-appserver.yelb.lb.internal
+  logConfiguration:
+    logDriver: awslogs
+    options:
+      awslogs-group: ecs/serviceconnectdemo
+      awslogs-region: us-west-2
+      awslogs-stream-prefix: yelb-appserver-serviceconnect1-cluster-envoy

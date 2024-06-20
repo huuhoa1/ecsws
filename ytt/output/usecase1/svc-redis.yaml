@@ -1,0 +1,36 @@
+cluster: serviceconnect1-cluster
+serviceName: yelb-redis
+taskDefinition: yelb-redis-serviceconnect1-cluster
+desiredCount: 1
+launchType: FARGATE
+platformVersion: LATEST
+propagateTags: SERVICE
+deploymentController:
+  type: ECS
+deploymentConfiguration:
+  maximumPercent: 200
+  minimumHealthyPercent: 0
+enableECSManagedTags: true
+enableExecuteCommand: true
+networkConfiguration:
+  awsvpcConfiguration:
+    assignPublicIp: ENABLED
+    securityGroups:
+    - sg-01d07dad229316295
+    subnets:
+    - subnet-0414a0be0e150a3db
+    - subnet-047a38fe844b6ee99
+serviceConnectConfiguration:
+  enabled: true
+  namespace: yelb.serviceconnect1.internal
+  services:
+  - portName: yelb-redis
+    clientAliases:
+    - port: 6379
+      dnsName: yelb-redis.yelb.cloudmap.internal
+  logConfiguration:
+    logDriver: awslogs
+    options:
+      awslogs-group: ecs/serviceconnectdemo
+      awslogs-region: us-west-2
+      awslogs-stream-prefix: yelb-redis-serviceconnect1-cluster-envoy

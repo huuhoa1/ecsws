@@ -1,0 +1,21 @@
+family: yelb-db-serviceconnect1-cluster
+networkMode: awsvpc
+cpu: "256"
+memory: "512"
+taskRoleArn: arn:aws:iam::879524088423:role/ecsws-ECSTaskRole-YelbDb
+executionRoleArn: arn:aws:iam::879524088423:role/ecsws-ECSTaskExecRole-YelbDb
+containerDefinitions:
+- name: yelb-db
+  image: mreferre/yelb-db:0.5
+  cpu: 100
+  essential: true
+  portMappings:
+  - name: yelb-db
+    containerPort: 5432
+    protocol: tcp
+  logConfiguration:
+    logDriver: awslogs
+    options:
+      awslogs-group: ecs/serviceconnectdemo
+      awslogs-region: us-west-2
+      awslogs-stream-prefix: yelb-db-serviceconnect1-cluster

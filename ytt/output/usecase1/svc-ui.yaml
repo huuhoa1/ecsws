@@ -1,0 +1,28 @@
+cluster: serviceconnect1-cluster
+serviceName: yelb-ui
+taskDefinition: yelb-ui-serviceconnect1-cluster
+desiredCount: 3
+launchType: FARGATE
+platformVersion: LATEST
+propagateTags: SERVICE
+deploymentController:
+  type: ECS
+deploymentConfiguration:
+  maximumPercent: 200
+  minimumHealthyPercent: 50
+enableECSManagedTags: true
+enableExecuteCommand: true
+networkConfiguration:
+  awsvpcConfiguration:
+    assignPublicIp: ENABLED
+    securityGroups:
+    - sg-0941861c8585b6e9b
+    subnets:
+    - subnet-0414a0be0e150a3db
+    - subnet-047a38fe844b6ee99
+loadBalancers:
+- targetGroupArn: arn:aws:elasticloadbalancing:us-west-2:879524088423:targetgroup/yelb-usecase1/57e238d0a5081a63
+  containerName: yelb-ui
+  containerPort: 80
+serviceConnectConfiguration:
+  enabled: true

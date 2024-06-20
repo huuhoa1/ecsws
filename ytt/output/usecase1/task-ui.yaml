@@ -1,0 +1,27 @@
+family: yelb-ui-serviceconnect1-cluster
+networkMode: awsvpc
+cpu: "256"
+memory: "512"
+taskRoleArn: arn:aws:iam::879524088423:role/ecsws-ECSTaskRole-YelbUi
+executionRoleArn: arn:aws:iam::879524088423:role/ecsws-ECSTaskExecRole-YelbUi
+containerDefinitions:
+- name: yelb-ui
+  image: hemanthavs/yelb-ui:latest
+  cpu: 100
+  essential: true
+  portMappings:
+  - name: yelb-ui
+    containerPort: 80
+    protocol: tcp
+    appProtocol: http
+  environment:
+  - name: APP_SERVER
+    value: yelb-appserver.yelb.lb.internal
+  - name: APP_SERVER_PORT
+    value: "4567"
+  logConfiguration:
+    logDriver: awslogs
+    options:
+      awslogs-group: ecs/serviceconnectdemo
+      awslogs-region: us-west-2
+      awslogs-stream-prefix: yelb-ui-serviceconnect1-cluster
